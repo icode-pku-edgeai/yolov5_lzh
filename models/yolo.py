@@ -48,7 +48,8 @@ from models.common import (
     GhostBottleneck,
     GhostConv,
     Proto,
-    space_to_depth
+    space_to_depth,
+    CBAM
 )
 from models.experimental import MixConv2d
 from utils.autoanchor import check_anchor_order
@@ -411,7 +412,7 @@ def parse_model(d, ch):
             C3Ghost,
             nn.ConvTranspose2d,
             DWConvTranspose2d,
-            C3x,
+            C3x
         }:
             c1, c2 = ch[f], args[0]
             if c2 != no:  # if not output
@@ -423,6 +424,11 @@ def parse_model(d, ch):
                 n = 1
         elif m is nn.BatchNorm2d:
             args = [ch[f]]
+        elif m is CBAM:
+            c1, c2 = ch[f], args[0]
+            if c2 != no:
+                c2 = make_divisible(c2 * gw, 8)
+            args = [c1, c2]
         elif m is Concat:
             c2 = sum(ch[x] for x in f)
         # TODO: channel, gw, gd
