@@ -48,6 +48,7 @@ from models.common import (
     GhostBottleneck,
     GhostConv,
     Proto,
+    space_to_depth
 )
 from models.experimental import MixConv2d
 from utils.autoanchor import check_anchor_order
@@ -435,6 +436,12 @@ def parse_model(d, ch):
             c2 = ch[f] * args[0] ** 2
         elif m is Expand:
             c2 = ch[f] // args[0] ** 2
+        elif m is space_to_depth:
+            c2 = 4 * ch[f]    
+            # 将输入通道数 ch[f] 增加了四倍
+            # 4 是基于 SpaceToDepth 的 block_size 为 2 的假设。如果 block_size 有所不同，这个数字应该是 block_size 的平方
+            # ch 是一个包含前面所有层输出通道数的列表，f 是指向前面某层的索引
+
         else:
             c2 = ch[f]
 
