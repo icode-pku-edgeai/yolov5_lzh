@@ -98,7 +98,7 @@ class QFocalLoss(nn.Module):
             return loss.sum()
         else:  # 'none'
             return loss
-def wasserstein_loss(pred, target, eps=1e-7, constant=12.8):
+def wasserstein_loss(pred, target, eps=1e-7, constant=12.8):#nwd loss 新增
     r"""`Implementation of paper `Enhancing Geometric Factors into
     Model Learning and Inference for Object Detection and Instance
     Segmentation <https://arxiv.org/abs/2005.03572>`_.
@@ -183,15 +183,15 @@ class ComputeLoss:
                 pwh = (pwh.sigmoid() * 2) ** 2 * anchors[i]
                 pbox = torch.cat((pxy, pwh), 1)  # predicted box
                 iou = bbox_iou(pbox, tbox[i], CIoU=True).squeeze()  # iou(prediction, target)
-                # lbox += (1.0 - iou).mean()  # iou loss
-
-                # # Objectness
-                # iou = iou.detach().clamp(0).type(tobj.dtype)
-                nwd = wasserstein_loss(pbox, tbox[i]).squeeze()
-                iou_ratio = 0.5
-                lbox += (1 - iou_ratio) * (1.0 - nwd).mean() + iou_ratio * (1.0 - iou).mean()  # iou loss
+                # nwd loss：替换187/189两行代码为190-194即可
+                lbox += (1.0 - iou).mean()  # iou loss
                 # Objectness
-                iou = (iou.detach() * iou_ratio + nwd.detach() * (1 - iou_ratio)).clamp(0, 1).type(tobj.dtype)
+                iou = iou.detach().clamp(0).type(tobj.dtype)
+                # nwd = wasserstein_loss(pbox, tbox[i]).squeeze()
+                # iou_ratio = 0.5
+                # lbox += (1 - iou_ratio) * (1.0 - nwd).mean() + iou_ratio * (1.0 - iou).mean()  # iou loss
+                # # Objectness
+                # iou = (iou.detach() * iou_ratio + nwd.detach() * (1 - iou_ratio)).clamp(0, 1).type(tobj.dtype)
                 if self.sort_obj_iou:
                     j = iou.argsort()
                     b, a, gj, gi, iou = b[j], a[j], gj[j], gi[j], iou[j]
