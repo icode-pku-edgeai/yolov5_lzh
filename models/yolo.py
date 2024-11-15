@@ -50,7 +50,9 @@ from models.common import (
     Proto,
     space_to_depth,
     CBAM,
-    CPCA
+    CPCA,
+    SEAM,
+    MultiSEAM
 )
 from models.experimental import MixConv2d
 from utils.autoanchor import check_anchor_order
@@ -430,6 +432,9 @@ def parse_model(d, ch):
             if c2 != no:
                 c2 = make_divisible(c2 * gw, 8)
             args = [c1, c2]
+        elif m in {SEAM,MultiSEAM}:
+            c2=ch[f]
+            args=[c2,*args]
         elif m is Concat:
             c2 = sum(ch[x] for x in f)
         # TODO: channel, gw, gd
