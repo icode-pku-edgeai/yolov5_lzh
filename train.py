@@ -13,7 +13,7 @@ Models:     https://github.com/ultralytics/yolov5/tree/master/models
 Datasets:   https://github.com/ultralytics/yolov5/tree/master/data
 Tutorial:   https://docs.ultralytics.com/yolov5/tutorials/train_custom_data
 """
-
+#just test
 import argparse
 import math
 import os
@@ -58,8 +58,8 @@ from utils.general import (
     check_amp,
     check_dataset,
     check_file,
-    check_git_info,
-    check_git_status,
+    # check_git_info,
+    # check_git_status,
     check_img_size,
     check_requirements,
     check_suffix,
@@ -97,7 +97,7 @@ from utils.torch_utils import (
 LOCAL_RANK = int(os.getenv("LOCAL_RANK", -1))  # https://pytorch.org/docs/stable/elastic/run.html
 RANK = int(os.getenv("RANK", -1))
 WORLD_SIZE = int(os.getenv("WORLD_SIZE", 1))
-GIT_INFO = check_git_info()
+# GIT_INFO = check_git_info()
 
 
 def train(hyp, opt, device, callbacks):
@@ -455,7 +455,7 @@ def train(hyp, opt, device, callbacks):
                     "updates": ema.updates,
                     "optimizer": optimizer.state_dict(),
                     "opt": vars(opt),
-                    "git": GIT_INFO,  # {remote, branch, commit} if a git repo
+                    # "git": GIT_INFO,  # {remote, branch, commit} if a git repo
                     "date": datetime.now().isoformat(),
                 }
 
@@ -569,7 +569,7 @@ def main(opt, callbacks=Callbacks()):
     """Runs training or hyperparameter evolution with specified options and optional callbacks."""
     if RANK in {-1, 0}:
         print_args(vars(opt))
-        check_git_status()
+        # check_git_status()
         check_requirements(ROOT / "requirements.txt")
 
     # Resume (from specified or most recent last.pt)
